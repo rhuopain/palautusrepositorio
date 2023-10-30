@@ -1,14 +1,26 @@
 from player_reader import PlayerReader
 
+from enum import Enum
+
+class SortBy(Enum):
+    POINTS = 1
+    GOALS = 2
+    ASSISTS = 3
+
+
 
 def sort_by_points(player):
     return player.points
 
+def sort_by_goals(player):
+    return player.goals
+
+def sort_by_assists(player):
+    return player.assists
+
 
 class StatisticsService:
-    def __init__(self):
-        reader = PlayerReader()
-
+    def __init__(self, reader :PlayerReader =PlayerReader() ):
         self._players = reader.get_players()
 
     def search(self, name):
@@ -25,12 +37,20 @@ class StatisticsService:
         )
 
         return list(players_of_team)
+        
+    def top(self, how_many, sortby =SortBy.POINTS):
 
-    def top(self, how_many):
+        if sortby==SortBy.GOALS:
+            sort_by_function=sort_by_goals
+        elif sortby==SortBy.ASSISTS:
+            sort_by_function=sort_by_assists
+        else:
+            sort_by_function=sort_by_points
+            
         sorted_players = sorted(
             self._players,
             reverse=True,
-            key=sort_by_points
+            key=sort_by_function
         )
 
         result = []
